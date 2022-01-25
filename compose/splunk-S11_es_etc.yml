@@ -1,0 +1,33 @@
+version: "3.6"
+
+networks:
+  splunknet:
+    driver: bridge
+    attachable: true
+
+services:
+  sh1:
+      restart: always
+      networks:
+        splunknet:
+          aliases: 
+            - sh1
+      image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+      hostname: sh1
+      container_name: sh1
+      environment: 
+        - SPLUNK_START_ARGS=--accept-license
+        - SPLUNK_ROLE=splunk_standalone
+        - SPLUNK_LICENSE_URI=/tmp/file.license
+        - SPLUNK_APPS_URL=/tmp/splunk-enterprise-security_660.spl,/tmp/eventgen_721.tgz,/tmp/botsv3_data_set.tgz,/tmp/splunk-add-on-for-unix-and-linux_831.tgz,/tmp/tenable-add-on-for-splunk_520.tgz
+      ports:
+        - 8001:8000
+        - 8089
+      volumes:
+        - ./default.yml:/tmp/defaults/default.yml
+        - ./file.license:/tmp/file.license
+        - ./app/splunk-enterprise-security_660.spl:/tmp/splunk-enterprise-security_660.spl
+        - ./app/eventgen_721.tgz:/tmp/eventgen_721.tgz
+        - ./app/botsv3_data_set.tgz:/tmp/botsv3_data_set.tgz
+        - ./app/splunk-add-on-for-unix-and-linux_831.tgz:/tmp/splunk-add-on-for-unix-and-linux_831.tgz
+        - ./app/tenable-add-on-for-splunk_520.tgz:/tmp/tenable-add-on-for-splunk_520.tgz

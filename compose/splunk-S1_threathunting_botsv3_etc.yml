@@ -1,0 +1,35 @@
+# use this file for guidance when creating the splunk/cribl clusters along w/ their relationships
+
+version: "3.6"
+
+networks:
+networks:
+  splunknet:
+    driver: bridge
+    attachable: true
+
+services:
+  sh1:
+      restart: always
+      networks:
+        splunknet:
+          aliases: 
+            - sh1
+      image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+      hostname: sh1
+      container_name: sh1
+      environment: 
+        - SPLUNK_START_ARGS=--accept-license
+        - SPLUNK_HTTP_ENABLESSL=true
+        - SPLUNK_ROLE=splunk_standalone
+        - SPLUNK_LICENSE_URI=/tmp/file.license
+        - SPLUNK_PASSWORD=password
+        - SPLUNK_APPS_URL=/tmp/apps/TA-osquery.tgz,/tmp/apps/TA-unix.tgz,/tmp/apps/TA-windows.tgz,/tmp/apps/attack-range_base.tgz,/tmp/apps/botsv3.tgz,/tmp/apps/decrypt2.tgz,/tmp/apps/eventgen.tgz,/tmp/apps/force-directed-app.tgz,/tmp/apps/link-analysis-app.tgz,/tmp/apps/lookup-file-editor.tgz,/tmp/apps/phantom-app.tgz,/tmp/apps/phantom-remote-search.tgz,/tmp/apps/phantom-reporting.tgz,/tmp/apps/punchcard-custom-visualization.tgz,/tmp/apps/sankey.tgz,/tmp/apps/security-essentials.tgz,/tmp/apps/threathunting.tgz,/tmp/apps/threathunting_base.tgz,/tmp/apps/timeline-visualization.tgz,/tmp/apps/url-toolbox.tgz
+      ports:
+        - 8000:8000
+        - 8088:8088
+        - 8089:8089
+        - 9997:9997
+      volumes:
+        - ./default.yml:/tmp/defaults/default.yml
+        - ./resources/apps:/tmp/apps

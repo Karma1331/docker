@@ -1,0 +1,261 @@
+version: "3.6"
+
+networks:
+networks:
+  splunknet:
+    driver: bridge
+    attachable: true
+
+services:
+  deployer:
+    networks:
+      splunknet:
+        aliases: 
+          - deployer
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: deployer
+    container_name: deployer
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search2,site1-search3,site2-search1,site2-search2
+      - SPLUNK_SEARCH_HEAD_CAPTAIN_URL=site1-search1
+      - SPLUNK_ROLE=splunk_deployer
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_URI=/tmp/file.license
+      - SPLUNK_DEPLOYER_URL=deployer
+    ports:
+      - 8000:8000
+      - 8089
+      - 9887
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+      - /tmp/file.license:/tmp/file.license
+
+  site1-search1:
+    networks:
+      splunknet:
+        aliases: 
+          - site1-search1
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site1-search1
+    container_name: site1-search1
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search2,site1-search3,site2-search1,site2-search2
+      - SPLUNK_SEARCH_HEAD_CAPTAIN_URL=site1-search1
+      - SPLUNK_ROLE=splunk_search_head_captain
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+      - SPLUNK_DEPLOYER_URL=deployer
+    ports:
+      - 8011:8000
+      - 8089
+      - 9887
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+
+  site1-search2:
+    networks:
+      splunknet:
+        aliases: 
+          - site1-search2
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site1-search2
+    container_name: site1-search2
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search2,site1-search3,site2-search1,site2-search2
+      - SPLUNK_SEARCH_HEAD_CAPTAIN_URL=site1-search1
+      - SPLUNK_ROLE=splunk_search_head_captain
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+      - SPLUNK_DEPLOYER_URL=deployer
+    ports:
+      - 8012:8000
+      - 8089
+      - 9887
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+    
+  site1-search3:
+    networks:
+      splunknet:
+        aliases: 
+          - site1-search3
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site1-search3
+    container_name: site1-search3
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search2,site1-search3,site2-search1,site2-search2
+      - SPLUNK_SEARCH_HEAD_CAPTAIN_URL=site1-search1
+      - SPLUNK_ROLE=splunk_search_head_captain
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+      - SPLUNK_DEPLOYER_URL=deployer
+    ports:
+      - 8013:8000
+      - 8089
+      - 9887
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+
+  site2-search1:
+    networks:
+      splunknet:
+        aliases: 
+          - site2-search1
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site2-search1
+    container_name: site2-search1
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search2,site1-search3,site2-search1,site2-search2
+      - SPLUNK_SEARCH_HEAD_CAPTAIN_URL=site1-search1
+      - SPLUNK_ROLE=splunk_search_head_captain
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+      - SPLUNK_DEPLOYER_URL=deployer
+    ports:
+      - 8021:8000
+      - 8089
+      - 9887
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+
+  site2-search2:
+    networks:
+      splunknet:
+        aliases: 
+          - site2-search2
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site2-search2
+    container_name: site2-search2
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search2,site1-search3,site2-search1,site2-search2
+      - SPLUNK_SEARCH_HEAD_CAPTAIN_URL=site1-search1
+      - SPLUNK_ROLE=splunk_search_head_captain
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+      - SPLUNK_DEPLOYER_URL=deployer
+    ports:
+      - 8022:8000
+      - 8089
+      - 9887
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+
+  cluster-manager:
+    networks:
+      splunknet:
+        aliases: 
+          - cluster-manager
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: cluster-manager
+    container_name: cluster-manager
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search1
+      - SPLUNK_ROLE=splunk_cluster_master
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+      - SPLUNK_IDXC_REPLICATION_FACTOR=3
+      - SPLUNK_IDXC_SEARCH_FACTOR=2
+      - SPLUNK_ALL_SITES=site1, site2
+    ports:
+      - 8001:8000
+      - 8089
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+
+  site1-index1:
+    networks:
+      splunknet:
+        aliases: 
+          - site1-index1
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site1-index1
+    container_name: site1-index1
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search1
+      - SPLUNK_ROLE=splunk_indexer
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+    ports:
+      - 8089
+      - 9197:9997
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+
+  site1-index2:
+    networks:
+      splunknet:
+        aliases: 
+          - site1-index2
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site1-index2
+    container_name: site1-index2
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search1
+      - SPLUNK_ROLE=splunk_indexer
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+    ports:
+      - 8089
+      - 9297:9997
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+
+  site2-index1:
+    networks:
+      splunknet:
+        aliases: 
+          - site2-index1
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site2-index1
+    container_name: site2-index1
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search1
+      - SPLUNK_ROLE=splunk_indexer
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+    ports:
+      - 8089
+      - 9397:9997
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
+
+  site2-index2:
+    networks:
+      splunknet:
+        aliases: 
+          - site2-index2
+    image: ${SPLUNK_IMAGE:-splunk/splunk:latest}
+    hostname: site2-index2
+    container_name: site2-index2
+    environment: 
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_INDEXER_URL=site1-index1,site1-index2,site2-index1,site2-index2
+      - SPLUNK_SEARCH_HEAD_URL=site1-search1
+      - SPLUNK_ROLE=splunk_indexer
+      - SPLUNK_CLUSTER_MASTER_URL=cluster-manager
+      - SPLUNK_LICENSE_MASTER_URL=deployer
+    ports:
+      - 8089
+      - 9497:9997
+    volumes:
+      - ./default.yml:/tmp/defaults/default.yml
